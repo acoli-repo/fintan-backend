@@ -1,0 +1,35 @@
+###SPLITTER... CONSTRUCT TODO        
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX powla: <http://purl.org/powla/powla.owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX conll: <http://ufal.mff.cuni.cz/conll2009-st/task-description.html#>
+PREFIX nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#>
+PREFIX paula: <https://github.com/korpling/paula-xml#> # annotation properties
+
+construct {
+
+  ?node ?p ?o .
+  ?rel1 rdfs:subPropertyOf ?rel2 .
+  
+} where {
+  
+  BIND (<?firstTok> as ?firstTok)
+  BIND (<?endTok> as ?endTok)
+  
+  ?firstTok powla:nextTerm* ?term . ?term powla:nextTerm* ?endTok .
+  ?term (powla:hasParent|powla:hasSource|^powla:hasSource|powla:hasTarget|^powla:hasTarget)* ?node .
+  OPTIONAL{
+    ?node ?p ?o
+    FILTER(!((?p = powla:nextTerm) && (?node = ?endTok)))
+  } 
+  
+  {?rel1 rdfs:subPropertyOf ?rel2}
+}
+        
+        
+        
+        
+        
+        

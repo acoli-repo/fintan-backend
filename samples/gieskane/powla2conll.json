@@ -1,0 +1,47 @@
+{
+"input" : "System.in"
+, "output" : "System.out"
+, "pipeline" : [ 
+	{ 
+	  "class" : "RDFStreamSplitterTDB",
+	  "lang" : "ttl",
+	  "initUpdate" : [
+	  	  "sparql/splitter-init-sentences.sparql"
+	  ],
+	  "iteratorQuery" : "sparql/splitter-iterate-sentences.sparql",
+	  "constructQuery" : "sparql/splitter-construct-sentences.sparql",
+	  "recursiveUpdate" : null,
+	  "segmentStreams" : null,
+	  "deltaStreams" : null,
+	  "tdbPath" : null
+	},
+	
+	{ "class" : "RDFUpdater"
+		//, "models" : null
+		, "updates" : [
+			//{"path":"sparql/induce-nif-sentences.sparql", "iter":"1"}
+			{"path":"sparql/powla2conll.sparql", "iter":"1"}
+			//,{"path":"sparql/split-nif-sentences.sparql", "iter":"1"}
+		]
+		, "threads" : "8"
+	},
+	
+	{ 
+	  "class" : "RDFStreamWriter",
+	  "lang" : "ttl",
+	  "delimiter" : "##next#Sentence##",
+	  "prefixDeduplication" : false,
+	  "INACTIVEcustomPrefixes" : {"" : "file:///tmp/salt/1007262495/FINTAN_DEFAULT_STREAM_CACHEFILE.zip//tmp/FINTAN_DEFAULT_STREAM_CACHEFILE.zip/"}
+	},
+	
+	{ 
+	  "class" : "CoNLLRDFFormatter",
+	  "modules" : [
+		{"mode":"CONLL", "columns": ["ID", "WORD", "LEMMA", "MAKRO", "FINIT", "NORM", "WA", "WASUB", "SEITE", "TEILSATZ"
+			, "TYPE", "DTA_TOK", "DTA_LEMMA", "DTA_STTS", "DTA_ORTHSATZ"
+			//, "HEAD"
+		]}
+	  ]
+	}
+]
+}
